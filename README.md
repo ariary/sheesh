@@ -6,7 +6,7 @@ You have two options:
 * Use `sheesh` to produce command
 * Define command within a yaml
 
-### g e n e r a t e with `sheesh`
+### generate with `sheesh`
 
 ```shell
 sheesh create "hello" --script "echo 'hello'"
@@ -15,7 +15,7 @@ sheesh setscript --script "echo 'hello {{who}}'"
 source <(sheesh)
 ```
 
-### g e n e r a t e with yaml file
+### generate with yaml file
 
 1. Create `.sheesh.yml` file
 2. Launch:
