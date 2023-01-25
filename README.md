@@ -4,7 +4,7 @@
 
 You have two options:
 * Use `sheesh` to produce command
-* Define command with a yaml
+* Define command within a yaml
 
 ### g e n e r a t e with `sheesh`
 
@@ -12,7 +12,7 @@ You have two options:
 sheesh create "hello" --script "echo 'hello'"
 sheesh addflag --command "hello" --name "who"
 sheesh setscript --script "echo 'hello {{who}}'"
-source <(sheesh completion)
+source <(sheesh)
 ```
 
 ### g e n e r a t e with yaml file
@@ -22,3 +22,18 @@ source <(sheesh completion)
 ```shell
 source <(sheesh completion)
 ```
+
+An `.sheesh.yml` example producing the same command as the above section:
+```yaml
+---
+commands:
+  - name: hello
+    flags:
+      - name: who
+    script: |
+      echo 'hello {{who}}'
+```
+
+## T I P S 🎩
+
+* very useful when you are testing api with `curl`
