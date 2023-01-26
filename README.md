@@ -1,10 +1,13 @@
 
 <div align=center>
-<strong>Generate only with:</strong>
-<br><code>source <(sheesh)</code>
+<strong>·</strong> 🪸 <strong>·</strong>
+<br><strong>Generate only with:</strong>
+<code>source <(sheesh)</code>
+<br><strong>·</strong> 🪸 <strong>·</strong>
 </div>
 
 
+## G O !
 You have two options:
 * Use `sheesh` to produce command
 * Define command within a yaml
