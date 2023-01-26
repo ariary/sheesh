@@ -1,6 +1,9 @@
 
+<div align=center>
+<strong>Generate only with:</strong>
+<br><code>source <(sheesh)</code>
+</div>
 
-## G O !
 
 You have two options:
 * Use `sheesh` to produce command
@@ -20,7 +23,7 @@ source <(sheesh)
 1. Create `.sheesh.yml` file
 2. Launch:
 ```shell
-source <(sheesh completion)
+source <(sheesh)
 ```
 
 An `.sheesh.yml` example producing the same command as the above section:
