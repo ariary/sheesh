@@ -49,4 +49,4 @@ commands:
 ## T I P S 🎩
 
 * very useful when you are testing api with `curl`
-* want to have command in all shell, add this to `.${SHELL}rc`: `source <(sheesh --path [PATH_TO_SHEESHYAML]`)
+* want to have command in all shell, add this to `.${SHELL}rc`: `source <(sheesh --file [PATH_TO_SHEESHYAML]`)

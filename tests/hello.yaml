@@ -1,0 +1,12 @@
+---
+commands:
+  - name: hello
+    flags:
+      - name: who
+      - name: random
+        argument: false
+    script: |
+      if [ "$RANDOM" = true ];then
+      WHO='toto'
+      fi
+      echo 'hello ${WHO}'
