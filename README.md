@@ -1,9 +1,9 @@
 
 <div align=center>
-<strong>·</strong> 🪸 <strong>·</strong>
+<strong>·</strong> 🪂 <strong>·</strong>
 <br><strong>Generate only with:</strong>
 <code>source <(sheesh)</code>
-<br><strong>·</strong> 🪸 <strong>·</strong>
+<br><strong>·</strong> 🪂 <strong>·</strong>
 </div>
 
 
