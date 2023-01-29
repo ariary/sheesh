@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"text/template"
 
 	"gopkg.in/yaml.v3"
 
@@ -55,6 +57,7 @@ func Generate(cfg quicli.Config) {
 	var output string
 	for i := 0; i < len(data.Commands); i++ {
 		output += processCommand(data.Commands[i])
+		fmt.Println(output)
 	}
 }
 
@@ -86,9 +89,35 @@ func main() {
 }
 
 func processCommand(c Command) (out string) {
-	fmt.Println(c.Script)
-	return "toto"
+	// fmt.Println(c.Script)
+
+	// last stage: command + completion
+	var outputBuffer bytes.Buffer
+	output := Output{"toto", "function", "completion"}
+
+	ot, err := template.New("output").Parse(outputTpl)
+	if err != nil {
+		panic(err)
+	}
+	err = ot.Execute(&outputBuffer, output)
+	if err != nil {
+		panic(err)
+	}
+	out = outputBuffer.String()
+	return out
 }
+
+// template
+type Output struct {
+	CommandName       string
+	Command           string
+	CommandCompletion string
+}
+
+var outputTpl = `{{ .Command}}
+{{ .CommandCompletion}}
+compdef _{{ .CommandName}} {{ .CommandName}}
+`
 
 var commandTpl = `
 ddf
