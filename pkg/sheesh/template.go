@@ -122,3 +122,41 @@ func MarshallFlagCases(flags []Flag) (out string) {
 	out = strings.Join(cases, "\n")
 	return out
 }
+
+type CommandContent struct {
+	CommandName      string
+	FlagsInit        string
+	FlagContentCases string
+	Script           string
+}
+
+var contentTpl = `{{ .CommandName}}(){
+{{ .FlagsInit}}
+while true; do
+	case "$1" in
+	{{ .FlagContentCases}}
+	-- ) shift; break ;;
+	* ) break ;;
+	esac
+done
+
+{{ .Script}}
+}
+`
+
+func MarshallCommandContent(c Command) (out string) {
+	var contentBuffer bytes.Buffer
+
+	content := CommandContent{c.Name, "toto", "titi", c.Script}
+
+	ct, err := template.New("command content").Parse(contentTpl)
+	if err != nil {
+		panic(err)
+	}
+	err = ct.Execute(&contentBuffer, content)
+	if err != nil {
+		panic(err)
+	}
+	out = contentBuffer.String()
+	return
+}

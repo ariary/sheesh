@@ -77,7 +77,9 @@ func ProcessCommand(c Command) (out string) {
 
 	commandCompletion := MarshallCompletion(c)
 
-	out = MarshallOutput(c.Name, "titi", commandCompletion)
+	commandContent := MarshallCommandContent(c)
+
+	out = MarshallOutput(c.Name, commandContent, commandCompletion)
 
 	return out
 }
