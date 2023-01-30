@@ -37,8 +37,15 @@ commands:
   - name: hello
     flags:
       - name: who
+        description: "determine to whom speak"
+        predefined:
+          - "toto"
+          - "titi"
       - name: random
-        argument: false
+        noarg: true
+      - name: save
+        description: "file to save output"
+        file: true
     script: |
       if [ "$RANDOM" = true ];then
       WHO='toto'
