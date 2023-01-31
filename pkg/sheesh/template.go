@@ -73,7 +73,13 @@ func MarshallFlagDefinitions(flags []Flag) (out string) {
 	var def []string
 	for i := 0; i < len(flags); i++ {
 		f := flags[i]
-		d := "'-" + f.Name + "[" + f.Description + "]:" + f.Name + ":->" + f.Name + "'"
+		var hyphen string
+		if len(f.Name) > 1 {
+			hyphen = "--"
+		} else {
+			hyphen = "-"
+		}
+		d := "'" + hyphen + f.Name + "[" + f.Description + "]:" + f.Name + ":->" + f.Name + "'"
 		def = append(def, d)
 	}
 	out = strings.Join(def, " ")
@@ -123,15 +129,17 @@ func MarshallFlagCases(flags []Flag) (out string) {
 	return out
 }
 
+// COMMAND CONTENT
+
 type CommandContent struct {
 	CommandName      string
-	FlagsInit        string
+	FlagInitVars     string
 	FlagContentCases string
 	Script           string
 }
 
 var contentTpl = `{{ .CommandName}}(){
-{{ .FlagsInit}}
+{{ .FlagInitVars}}
 while true; do
 	case "$1" in
 	{{ .FlagContentCases}}
@@ -147,7 +155,15 @@ done
 func MarshallCommandContent(c Command) (out string) {
 	var contentBuffer bytes.Buffer
 
-	content := CommandContent{c.Name, "toto", "titi", c.Script}
+	var initFlagVars, flagCases []string
+	for i := 0; i < len(c.Flags); i++ {
+		init := MarshallFlagInitVar(c.Flags[i])
+		initFlagVars = append(initFlagVars, init)
+		flagCase := MarshallFlagCase(c.Flags[i])
+		flagCases = append(flagCases, flagCase)
+	}
+
+	content := CommandContent{c.Name, strings.Join(initFlagVars, "\n"), strings.Join(flagCases, "\n"), c.Script}
 
 	ct, err := template.New("command content").Parse(contentTpl)
 	if err != nil {
@@ -158,5 +174,74 @@ func MarshallCommandContent(c Command) (out string) {
 		panic(err)
 	}
 	out = contentBuffer.String()
+	return
+}
+
+type FlagInit struct {
+	VarName      string
+	DefaultValue string
+}
+
+var flagInitTpl = `{{ .VarName}}={{ .DefaultValue}}`
+
+func MarshallFlagInitVar(f Flag) (out string) {
+	var initBuffer bytes.Buffer
+	var defaultV string
+	if f.NoArgs {
+		defaultV = "false"
+	}
+	flagInit := FlagInit{strings.ToUpper(f.Name), defaultV}
+
+	ct, err := template.New("flag var init").Parse(flagInitTpl)
+	if err != nil {
+		panic(err)
+	}
+	err = ct.Execute(&initBuffer, flagInit)
+	if err != nil {
+		panic(err)
+	}
+	out = initBuffer.String()
+	return
+}
+
+type FlagCaseCommand struct {
+	FlagName string
+	VarName  string
+	VarValue string
+	Hyphen   string
+	Shift    string
+}
+
+var flagCaseCommandTpl = `{{ .Hyphen}}{{ .FlagName}}) {{ .VarName}}={{ .VarValue}}; shift {{ .Shift}};;`
+
+func MarshallFlagCase(f Flag) (out string) {
+
+	// 	-d | --debug ) DEBUG=true; shift ;;
+	// -n | --name ) NAME="$2"; shift 2 ;;
+
+	var caseBuffer bytes.Buffer
+	var value, shift, hyphen string
+	if f.NoArgs {
+		value = "true"
+	} else {
+		value = "\"$2\""
+		shift = "2"
+	}
+	if len(f.Name) > 1 {
+		hyphen = "--"
+	} else {
+		hyphen = "-"
+	}
+	flagCase := FlagCaseCommand{f.Name, strings.ToUpper(f.Name), value, hyphen, shift}
+
+	ct, err := template.New("flag var init").Parse(flagCaseCommandTpl)
+	if err != nil {
+		panic(err)
+	}
+	err = ct.Execute(&caseBuffer, flagCase)
+	if err != nil {
+		panic(err)
+	}
+	out = caseBuffer.String()
 	return
 }

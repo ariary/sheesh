@@ -57,3 +57,9 @@ commands:
 
 * very useful when you are testing api with `curl`
 * want to have command in all shell, add this to `.${SHELL}rc`: `source <(sheesh --file [PATH_TO_SHEESHYAML]`)
+
+
+## Limits/Improvement
+* Only for zsh
+* Use uppercase flag name in your script to use it value (`$FLAGNAME`)
+* No default value
