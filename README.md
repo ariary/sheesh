@@ -1,9 +1,11 @@
 
 <div align=center>
-<strong>·</strong> 🪂 <strong>·</strong>
+
 <br><strong>Generate only with:</strong>
 <code>source <(sheesh)</code>
-<br><strong>·</strong> 🪂 <strong>·</strong>
+
+<img width=500 src="https://user-images.githubusercontent.com/14805903/215820436-2e7d553e-48c0-4232-b286-f21ae8c3ef1e.png">
+<br><strong>·</strong> 🪂 <strong>·</strong><br>
 </div>
 
 
