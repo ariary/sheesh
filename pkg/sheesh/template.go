@@ -107,7 +107,7 @@ func MarshallFlagCases(flags []Flag) (out string) {
 				caseDef = "_files"
 			}
 			if len(f.Predefined) != 0 {
-				caseDef = "_values '" + f.Name + "' " + strings.Join(f.Predefined, ",")
+				caseDef = "_values '" + f.Name + "' " + strings.Join(f.Predefined, " ")
 			}
 		} else {
 			caseDef = "_values '" + f.Name + "'"
