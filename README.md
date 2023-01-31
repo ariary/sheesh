@@ -63,3 +63,4 @@ commands:
 * Only for zsh
 * Use uppercase flag name in your script to use it value (`$FLAGNAME`)
 * No default value
+* Can't use var with "-" (hence flag too)

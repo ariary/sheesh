@@ -1,0 +1,25 @@
+---
+commands:
+  - name: api-postman
+    flags:
+      - name: stealth
+        description: "change User-Agent"
+        noarg: true
+      - name: token
+        predefined:
+          - "THISISAADMINTOKEN"
+          - "Dzdk7e0987djjdzz87dz"
+      - name: save
+        description: "file to save output"
+        file: true
+    script: |
+      USERAGENT="curl 2.0/7"
+      if [ "$STEALTH" = true ] ; then
+          USERAGENT="not a hacker"
+      fi
+      if [ -n "$SAVE" ];then
+        curl -H "User-Agent: ${USERAGENT}" -H "Authorization: Bearer ${TOKEN}" http://postman-echo.com/get > "${SAVE}"
+      else
+        curl -H "User-Agent: ${USERAGENT}" -H "Authorization: Bearer ${TOKEN}" http://postman-echo.com/get
+      fi
+      
