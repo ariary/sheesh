@@ -20,7 +20,7 @@ You have two options:
 sheesh create "hello" --script "echo 'hello'"
 sheesh addflag --command "hello" --name "who"
 sheesh addflag --command "hello" --name "random" --no-argument
-sheesh setscript --script "if [ "$RANDOM" = true ]; then WHO='toto';fi;echo 'hello ${WHO}'"
+sheesh setscript --command "hello" --script "if [ "$RANDOM" = true ]; then WHO='toto';fi;echo 'hello ${WHO}'"
 source <(sheesh)
 ```
 

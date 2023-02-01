@@ -10,12 +10,14 @@ func main() {
 		Usage:       "sheesh [command] [flags]",
 		Description: "Better-than-an-alias generator",
 		Flags: quicli.Flags{
-			{Name: "file", Default: ".sheesh.yml", Description: "sheesh configuration file", ForSubcommand: quicli.SubcommandSet{"create", "addflag", "setscript"}},
+			{Name: "file", Default: ".sheesh.yml", Description: "sheesh configuration file", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
+			{Name: "command", Default: "", Description: "sheesh command to target", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
+			{Name: "remove", Default: false, Description: "remove object", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
 		},
 		Function: sheesh.Generate,
 		Subcommands: quicli.Subcommands{
-			{Name: "create", Description: "Create sheesh command", Function: sheesh.Create},
-			{Name: "addflag", Description: "Add a flag to existing command", Function: sheesh.AddFlag},
+			{Name: "setcommand", Description: "Set sheesh command", Function: sheesh.SetCommand},
+			{Name: "setflag", Description: "Set a flag to existing command", Function: sheesh.SetFlag},
 			{Name: "setscript", Description: "Set script of an existing command", Function: sheesh.SetScript},
 		},
 	}
