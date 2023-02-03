@@ -13,6 +13,7 @@ func main() {
 			{Name: "file", Default: ".sheesh.yml", Description: "sheesh configuration file", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
 			{Name: "command", Default: "", Description: "sheesh command to target", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
 			{Name: "remove", Default: false, Description: "remove object", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
+			{Name: "script", Default: "", Description: "scritp content", ForSubcommand: quicli.SubcommandSet{"setscript"}},
 		},
 		Function: sheesh.Generate,
 		Subcommands: quicli.Subcommands{

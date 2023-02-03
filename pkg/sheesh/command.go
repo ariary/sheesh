@@ -28,6 +28,17 @@ type Config struct {
 	Commands []Command `yaml:"commands"`
 }
 
+func replaceCommand(commands []Command, c Command) (nCommands []Command) {
+	nCommands = commands
+	commandName := c.Name
+	for i := 0; i < len(commands); i++ {
+		if commands[i].Name == commandName {
+			nCommands[i] = c
+		}
+	}
+	return nCommands
+}
+
 // getCommandsFromFile: parse yaml file to retrieve commands list
 func getCommandsFromFile(filename string) (commands Config, err error) {
 	yfile, err := ioutil.ReadFile(filename)
@@ -62,6 +73,30 @@ func getCommandByNameFromFile(filename string, commandName string) (c Command) {
 	return c
 }
 
+// getCommandsFromFile: parse yaml file to retrieve commands list
+func getCommandByNameFromCfg(cfg quicli.Config) (c Command) {
+	cName := cfg.GetStringFlag("command")
+	if cName == "" {
+		fmt.Println("No command name provided. Exit. use --command")
+		os.Exit(1)
+	}
+	file := cfg.GetStringFlag("file")
+	command := getCommandByNameFromFile(file, cName)
+	if command.Name == "" {
+		fmt.Println("Command", cName, "not found in", file)
+		os.Exit(1)
+	}
+	return command
+}
+
+func writeCommandsToFile(commands Config, filename string) (err error) {
+	var commandsBuffer bytes.Buffer
+	yamlEncoder := yaml.NewEncoder(&commandsBuffer)
+	yamlEncoder.SetIndent(2)
+	yamlEncoder.Encode(&commands)
+	return ioutil.WriteFile(filename, commandsBuffer.Bytes(), 0644)
+}
+
 // SetCommand: create a sheesh command (add it to others if they exist)
 func SetCommand(cfg quicli.Config) {
 	cName := cfg.GetStringFlag("command")
@@ -80,7 +115,8 @@ func SetCommand(cfg quicli.Config) {
 		for i := 0; i < len(commands.Commands); i++ {
 			if commands.Commands[i].Name == cName {
 				commands.Commands = append(commands.Commands[:i], commands.Commands[i+1:]...)
-				fmt.Println("Command", cName, "added.")
+				fmt.Println("Command", cName, "removed.")
+				return
 			}
 		}
 	} else {
@@ -95,13 +131,10 @@ func SetCommand(cfg quicli.Config) {
 		commands.Commands = append(commands.Commands, command)
 	}
 
-	var commandsBuffer bytes.Buffer
-	yamlEncoder := yaml.NewEncoder(&commandsBuffer)
-	yamlEncoder.SetIndent(2)
-	yamlEncoder.Encode(&commands)
-	if err := ioutil.WriteFile(file, commandsBuffer.Bytes(), 0644); err != nil {
+	if err := writeCommandsToFile(commands, file); err != nil {
 		panic(err)
 	}
+	fmt.Println("Command", cName, "added.")
 }
 
 // Generate: generate output of a sheesh command
@@ -131,32 +164,33 @@ func Generate(cfg quicli.Config) {
 
 // SetFlag: add a flag of a sheesh command
 func SetFlag(cfg quicli.Config) {
-	cName := cfg.GetStringFlag("command")
-	if cName == "" {
-		fmt.Println("No command name provided. Exit. use --command")
-		os.Exit(1)
-	}
-	file := cfg.GetStringFlag("file")
-	command := getCommandByNameFromFile(file, cName)
+	command := getCommandByNameFromCfg(cfg)
 	if command.Name == "" {
-		fmt.Println("Command", cName, "not found in", file)
+		fmt.Println("Command", cfg.GetStringFlag("command"), "not found in", cfg.GetStringFlag("file"))
 		os.Exit(1)
 	}
 }
 
 // SetScript: set the script of of a sheesh command
 func SetScript(cfg quicli.Config) {
-	cName := cfg.GetStringFlag("command")
-	if cName == "" {
-		fmt.Println("No command name provided. Exit. use --command")
-		os.Exit(1)
-	}
-	file := cfg.GetStringFlag("file")
-	command := getCommandByNameFromFile(file, cName)
+	filename := cfg.GetStringFlag("file")
+	command := getCommandByNameFromCfg(cfg)
 	if command.Name == "" {
-		fmt.Println("Command", cName, "not found in", file)
+		fmt.Println("Command", cfg.GetStringFlag("command"), "not found in", filename)
 		os.Exit(1)
 	}
+	command.Script = cfg.GetStringFlag("script")
+
+	commands, err := getCommandsFromFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	commands.Commands = replaceCommand(commands.Commands, command)
+	if err := writeCommandsToFile(commands, filename); err != nil {
+		panic(err)
+	}
+	fmt.Println(cfg.GetStringFlag("command"), "script changed.")
+
 }
 
 // ProcessCommand: take the command and return all the sheesh output (function + completion)
