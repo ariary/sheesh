@@ -17,10 +17,10 @@ You have two options:
 ### generate with `sheesh`
 
 ```shell
-sheesh create "hello" --script "echo 'hello'"
-sheesh addflag --command "hello" --name "who"
-sheesh addflag --command "hello" --name "random" --no-argument
-sheesh setscript --command "hello" --script "if [ "$RANDOM" = true ]; then WHO='toto';fi;echo 'hello ${WHO}'"
+sheesh setcommand --command "hello" --script "echo 'hello'"
+sheesh setflag --command "hello" --name "who" --predefined "toto,titi,tata"
+sheesh setflag --command "hello" --name "random" --noargs
+sheesh setscript --command "hello" --script "if [ \"$RANDOM\" = true ]; then WHO='toto';fi;echo 'hello ${WHO}'"
 source <(sheesh)
 ```
 
@@ -32,27 +32,32 @@ source <(sheesh)
 source <(sheesh)
 ```
 
-An `.sheesh.yml` example producing the same command as the above section:
+An `.sheesh.yml` example producing some api call:
 ```yaml
 ---
 commands:
-  - name: hello
+  - name: api-postman
     flags:
-      - name: who
-        description: "determine to whom speak"
-        predefined:
-          - "toto"
-          - "titi"
-      - name: random
+      - name: stealth
+        description: "change User-Agent"
         noarg: true
+      - name: token
+        predefined:
+          - "THISISAADMINTOKEN"
+          - "Dzdk7e0987djjdzz87dz"
       - name: save
         description: "file to save output"
         file: true
     script: |
-      if [ "$RANDOM" = true ];then
-      WHO='toto'
+      USERAGENT="curl 2.0/7"
+      if [ "$STEALTH" = true ] ; then
+          USERAGENT="not a hacker"
       fi
-      echo 'hello ${WHO}'
+      if [ -n "$SAVE" ];then
+        curl -H "User-Agent: ${USERAGENT}" -H "Authorization: Bearer ${TOKEN}" http://postman-echo.com/get > "${SAVE}"
+      else
+        curl -H "User-Agent: ${USERAGENT}" -H "Authorization: Bearer ${TOKEN}" http://postman-echo.com/get
+      fi
 ```
 
 ## T I P S 🎩
