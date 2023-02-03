@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/ariary/quicli/pkg/quicli"
 	"gopkg.in/yaml.v3"
@@ -37,6 +38,24 @@ func replaceCommand(commands []Command, c Command) (nCommands []Command) {
 		}
 	}
 	return nCommands
+}
+
+func flagExistInCommand(command Command, flag Flag) (exist bool, index int) {
+	flagName := flag.Name
+	for i := 0; i < len(command.Flags); i++ {
+		if command.Flags[i].Name == flagName {
+			return true, i
+		}
+	}
+	return false, 0
+}
+
+func replaceFlagInCommand(command *Command, flag Flag) {
+	if flagExist, i := flagExistInCommand(*command, flag); flagExist {
+		command.Flags[i] = flag
+	} else {
+		command.Flags = append(command.Flags, flag)
+	}
 }
 
 // getCommandsFromFile: parse yaml file to retrieve commands list
@@ -165,10 +184,30 @@ func Generate(cfg quicli.Config) {
 // SetFlag: add a flag of a sheesh command
 func SetFlag(cfg quicli.Config) {
 	command := getCommandByNameFromCfg(cfg)
+	filename := cfg.GetStringFlag("file")
+
 	if command.Name == "" {
 		fmt.Println("Command", cfg.GetStringFlag("command"), "not found in", cfg.GetStringFlag("file"))
 		os.Exit(1)
 	}
+	nFlag := Flag{
+		Name:        cfg.GetStringFlag("name"),
+		Description: cfg.GetStringFlag("description"),
+		NoArgs:      cfg.GetBoolFlag("noargs"),
+		File:        cfg.GetBoolFlag("isFile"),
+		Predefined:  strings.Split(cfg.GetStringFlag("predefined"), ","),
+	}
+	replaceFlagInCommand(&command, nFlag)
+	commands, err := getCommandsFromFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	commands.Commands = replaceCommand(commands.Commands, command)
+	if err := writeCommandsToFile(commands, filename); err != nil {
+		panic(err)
+	}
+	fmt.Println(cfg.GetStringFlag("name"), "flag changed.")
+
 }
 
 // SetScript: set the script of of a sheesh command
