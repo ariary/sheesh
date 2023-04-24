@@ -14,7 +14,7 @@ func main() {
 			{Name: "command", Default: "", Description: "sheesh command to target", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
 			{Name: "remove", Default: false, Description: "remove object", ForSubcommand: quicli.SubcommandSet{"setcommand", "setflag", "setscript"}},
 			// setscript
-			{Name: "script", Default: "", Description: "script content", ForSubcommand: quicli.SubcommandSet{"setscript"}},
+			{Name: "script", Default: "", Description: "script content", ForSubcommand: quicli.SubcommandSet{"setscript", "setcommand"}},
 			//setflag
 			{Name: "description", Default: "", Description: "flag description", ForSubcommand: quicli.SubcommandSet{"setflag"}},
 			{Name: "name", Default: "", Description: "flag name", ForSubcommand: quicli.SubcommandSet{"setflag"}},

@@ -19,8 +19,8 @@ You have two options:
 ```shell
 sheesh setcommand --command "hello" --script "echo 'hello'"
 sheesh setflag --command "hello" --name "who" --predefined "toto,titi,tata"
-sheesh setflag --command "hello" --name "random" --noargs
-sheesh setscript --command "hello" --script "if [ \"$RANDOM\" = true ]; then WHO='toto';fi;echo 'hello ${WHO}'"
+sheesh setflag --command "hello" --name "nrandom" --noargs
+sheesh setscript --command "hello" --script "if [ \"\$RANDOM\" = true ]; then WHO='toto';fi;echo \"hello \${WHO}\""
 source <(sheesh)
 ```
 
